@@ -1,27 +1,7 @@
 {
 	"name": "isort",
 	"displayName": "isort",
-	"version": "0.0.1",
-	"private": false,
 	"description": "%extension.description%",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandIsort#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandIsort/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandIsort.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "./dist/extension.js",
 	"scripts": {
 		"Document": "Document 'Source/**/*.ts'",
@@ -166,7 +146,6 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/chai": "4.3.16",
 		"@types/chai-arrays": "2.0.3",
 		"@types/chai-as-promised": "7.1.8",
@@ -185,9 +164,6 @@
 	"extensionDependencies": [
 		"ms-python.python"
 	],
-	"publishConfig": {
-		"access": "public"
-	},
 	"icon": "icon.png",
 	"galleryBanner": {
 		"color": "#1e415e",
