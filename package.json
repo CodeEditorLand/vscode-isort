@@ -1,0 +1,223 @@
+{
+    "name": "isort",
+    "displayName": "isort",
+    "description": "%extension.description%",
+    "version": "2023.13.0-dev",
+    "preview": true,
+    "serverInfo": {
+        "name": "isort",
+        "module": "isort"
+    },
+    "publisher": "ms-python",
+    "license": "MIT",
+    "homepage": "https://github.com/Microsoft/vscode-isort",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/microsoft/vscode-isort.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Microsoft/vscode-isort/issues"
+    },
+    "icon": "icon.png",
+    "galleryBanner": {
+        "color": "#1e415e",
+        "theme": "dark"
+    },
+    "keywords": [
+        "python",
+        "formatting",
+        "isort"
+    ],
+    "engines": {
+        "vscode": "^1.74.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Formatters"
+    ],
+    "extensionDependencies": [
+        "ms-python.python"
+    ],
+    "capabilities": {
+        "virtualWorkspaces": {
+            "supported": false,
+            "description": "Virtual Workspaces are not supported with isort."
+        }
+    },
+    "activationEvents": [
+        "onLanguage:python",
+        "workspaceContains:pyproject.toml",
+        "workspaceContains:.isort"
+    ],
+    "main": "./dist/extension.js",
+    "l10n": "./l10n",
+    "scripts": {
+        "vscode:prepublish": "npm run package",
+        "compile": "webpack",
+        "watch": "webpack --watch",
+        "package": "webpack --mode production --devtool hidden-source-map",
+        "compile-tests": "tsc -p . --outDir out",
+        "watch-tests": "tsc -p . -w --outDir out",
+        "pretest": "npm run compile-tests && npm run compile",
+        "lint": "eslint src --ext ts",
+        "format-check": "prettier --check 'src/**/*.ts' 'build/**/*.yml' '.github/**/*.yml'",
+        "tests": "node ./out/test/ts_tests/runTest.js",
+        "vsce-package": "vsce package -o isort.vsix"
+    },
+    "contributes": {
+        "languages": [
+            {
+                "filenames": [
+                    "pyproject.toml",
+                    ".isort"
+                ],
+                "id": "toml"
+            }
+        ],
+        "configuration": {
+            "properties": {
+                "isort.args": {
+                    "default": [],
+                    "markdownDescription": "%settings.args.description%",
+                    "items": {
+                        "type": "string"
+                    },
+                    "scope": "resource",
+                    "type": "array"
+                },
+                "isort.check": {
+                    "default": false,
+                    "markdownDescription": "%settings.check.description%",
+                    "scope": "resource",
+                    "type": "boolean",
+                    "tags": [
+                        "experimental"
+                    ]
+                },
+                "isort.importStrategy": {
+                    "default": "useBundled",
+                    "markdownDescription": "%settings.importStrategy.description%",
+                    "enum": [
+                        "useBundled",
+                        "fromEnvironment"
+                    ],
+                    "enumDescriptions": [
+                        "%settings.importStrategy.useBundled.description%",
+                        "%settings.importStrategy.fromEnvironment.description%"
+                    ],
+                    "scope": "resource",
+                    "type": "string"
+                },
+                "isort.interpreter": {
+                    "default": [],
+                    "markdownDescription": "%settings.interpreter.description%",
+                    "scope": "resource",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "isort.path": {
+                    "default": [],
+                    "markdownDescription": "%settings.path.description%",
+                    "scope": "resource",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "examples": [
+                        [
+                            "~/global_env/isort"
+                        ],
+                        [
+                            "~/.env/python",
+                            "-m",
+                            "isort"
+                        ]
+                    ]
+                },
+                "isort.serverEnabled": {
+                    "default": true,
+                    "markdownDescription": "%settings.serverEnabled.description%",
+                    "scope": "machine",
+                    "type": "boolean"
+                },
+                "isort.severity": {
+                    "default": {
+                        "W": "Warning",
+                        "E": "Hint"
+                    },
+                    "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                            "Error",
+                            "Hint",
+                            "Information",
+                            "Warning"
+                        ]
+                    },
+                    "markdownDescription": "%settings.severity.description%",
+                    "scope": "resource",
+                    "type": "object"
+                },
+                "isort.showNotifications": {
+                    "default": "off",
+                    "markdownDescription": "%settings.showNotifications.description%",
+                    "enum": [
+                        "off",
+                        "onError",
+                        "onWarning",
+                        "always"
+                    ],
+                    "enumDescriptions": [
+                        "%settings.showNotifications.off.description%",
+                        "%settings.showNotifications.onError.description%",
+                        "%settings.showNotifications.onWarning.description%",
+                        "%settings.showNotifications.always.description%"
+                    ],
+                    "scope": "machine",
+                    "type": "string"
+                }
+            }
+        },
+        "commands": [
+            {
+                "title": "%command.restartServer%",
+                "category": "isort",
+                "command": "isort.restart"
+            }
+        ]
+    },
+    "dependencies": {
+        "fs-extra": "^11.2.0",
+        "vscode-languageclient": "^8.1.0"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.3.11",
+        "@types/chai-arrays": "^2.0.3",
+        "@types/chai-as-promised": "^7.1.8",
+        "@types/fs-extra": "^11.0.4",
+        "@types/glob": "^8.1.0",
+        "@types/mocha": "^10.0.6",
+        "@types/node": "16.x",
+        "@types/sinon": "^17.0.3",
+        "@types/vscode": "^1.74.0",
+        "@typescript-eslint/eslint-plugin": "^6.19.0",
+        "@typescript-eslint/parser": "^6.19.0",
+        "@vscode/test-electron": "^2.3.8",
+        "@vscode/vsce": "^2.22.0",
+        "chai": "^4.3.10",
+        "chai-arrays": "^2.2.0",
+        "chai-as-promised": "^7.1.1",
+        "eslint": "^8.56.0",
+        "glob": "^10.3.10",
+        "mocha": "^10.2.0",
+        "prettier": "^3.2.4",
+        "sinon": "^17.0.1",
+        "ts-loader": "^9.5.1",
+        "typemoq": "^2.1.0",
+        "typescript": "^5.3.3",
+        "webpack": "^5.89.0",
+        "webpack-cli": "^5.1.4"
+    }
+}
