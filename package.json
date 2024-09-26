@@ -1,14 +1,14 @@
 {
-	"name": "isort",
-	"displayName": "isort",
-	"description": "%extension.description%",
-	"main": "./dist/extension.js",
-	"scripts": {
-		"compile": "webpack",
-		"compile-tests": "tsc -p . --outDir out",
-		"tests": "node ./out/test/ts_tests/runTest.js",
-		"vsce-package": "vsce package -o isort.vsix",
-		"watch-tests": "tsc -p . -w --outDir out"
+	"activationEvents": [
+		"onLanguage:python",
+		"workspaceContains:pyproject.toml",
+		"workspaceContains:.isort"
+	],
+	"capabilities": {
+		"virtualWorkspaces": {
+			"description": "Virtual Workspaces are not supported with isort.",
+			"supported": false
+		}
 	},
 	"contributes": {
 		"commands": [
@@ -134,14 +134,10 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"onLanguage:python",
-		"workspaceContains:pyproject.toml",
-		"workspaceContains:.isort"
-	],
 	"dependencies": {
 		"fs-extra": "11.2.0"
 	},
+	"description": "%extension.description%",
 	"devDependencies": {
 		"@types/chai": "5.0.0",
 		"@types/chai-arrays": "2.0.3",
@@ -158,22 +154,26 @@
 		"ts-loader": "9.5.1",
 		"typemoq": "2.1.0"
 	},
+	"displayName": "isort",
 	"extensionDependencies": [
 		"ms-python.python"
 	],
-	"icon": "icon.png",
 	"galleryBanner": {
 		"color": "#1e415e",
 		"theme": "dark"
 	},
-	"preview": true,
-	"capabilities": {
-		"virtualWorkspaces": {
-			"description": "Virtual Workspaces are not supported with isort.",
-			"supported": false
-		}
-	},
+	"icon": "icon.png",
 	"l10n": "./l10n",
+	"main": "./dist/extension.js",
+	"name": "isort",
+	"preview": true,
+	"scripts": {
+		"compile": "webpack",
+		"compile-tests": "tsc -p . --outDir out",
+		"tests": "node ./out/test/ts_tests/runTest.js",
+		"vsce-package": "vsce package -o isort.vsix",
+		"watch-tests": "tsc -p . -w --outDir out"
+	},
 	"serverInfo": {
 		"module": "isort",
 		"name": "isort"
