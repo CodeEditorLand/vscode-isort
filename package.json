@@ -146,7 +146,7 @@
 		"@types/glob": "8.1.0",
 		"@types/node": "22.x",
 		"@types/sinon": "17.0.3",
-		"chai": "5.1.1",
+		"chai": "5.1.2",
 		"chai-arrays": "2.2.0",
 		"chai-as-promised": "8.0.0",
 		"glob": "11.0.0",
