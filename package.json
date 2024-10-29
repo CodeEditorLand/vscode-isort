@@ -139,7 +139,7 @@
 	},
 	"description": "%extension.description%",
 	"devDependencies": {
-		"@types/chai": "5.0.0",
+		"@types/chai": "5.0.1",
 		"@types/chai-arrays": "2.0.3",
 		"@types/chai-as-promised": "8.0.1",
 		"@types/fs-extra": "11.0.4",
