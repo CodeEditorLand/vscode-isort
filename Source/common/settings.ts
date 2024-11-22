@@ -20,6 +20,7 @@ export interface ISettings {
 	severity: Record<string, string>;
 	path: string[];
 	interpreter: string[];
+
 	importStrategy: string;
 	showNotifications: string;
 }
@@ -43,7 +44,9 @@ function resolveVariables(
 	workspace?: WorkspaceFolder,
 ): string[] {
 	const substitutions = new Map<string, string>();
+
 	const home = process.env.HOME || process.env.USERPROFILE;
+
 	if (home) {
 		substitutions.set("${userHome}", home);
 	}
@@ -51,6 +54,7 @@ function resolveVariables(
 		substitutions.set("${workspaceFolder}", workspace.uri.fsPath);
 	}
 	substitutions.set("${cwd}", process.cwd());
+
 	getWorkspaceFolders().forEach((w) => {
 		substitutions.set("${workspaceFolder:" + w.name + "}", w.uri.fsPath);
 	});
@@ -65,6 +69,7 @@ function resolveVariables(
 
 function getArgs(namespace: string, workspace: WorkspaceFolder): string[] {
 	const config = getConfiguration(namespace, workspace.uri);
+
 	const args = config.get<string[]>("args", []);
 
 	if (args.length > 0) {
@@ -72,7 +77,9 @@ function getArgs(namespace: string, workspace: WorkspaceFolder): string[] {
 	}
 
 	const legacyConfig = getConfiguration("python", workspace.uri);
+
 	const legacyArgs = legacyConfig.get<string[]>("sortImports.args", []);
+
 	if (legacyArgs.length > 0) {
 		traceLog(
 			`Using legacy configuration form 'python.sortImports.args': ${legacyArgs.join(" ")}.`,
@@ -83,6 +90,7 @@ function getArgs(namespace: string, workspace: WorkspaceFolder): string[] {
 
 function getPath(namespace: string, workspace: WorkspaceFolder): string[] {
 	const config = getConfiguration(namespace, workspace.uri);
+
 	const path = config.get<string[]>("path", []);
 
 	if (path.length > 0) {
@@ -90,11 +98,14 @@ function getPath(namespace: string, workspace: WorkspaceFolder): string[] {
 	}
 
 	const legacyConfig = getConfiguration("python", workspace.uri);
+
 	const legacyPath = legacyConfig.get<string>("sortImports.path", "");
+
 	if (legacyPath.length > 0 && legacyPath !== "isort") {
 		traceLog(
 			`Using legacy configuration form 'python.sortImports.path': ${legacyPath}`,
 		);
+
 		return [legacyPath];
 	}
 	return [];
@@ -105,6 +116,7 @@ export function getInterpreterFromSetting(
 	scope?: ConfigurationScope,
 ) {
 	const config = getConfiguration(namespace, scope);
+
 	return config.get<string[]>("interpreter");
 }
 
@@ -116,8 +128,10 @@ export async function getWorkspaceSettings(
 	const config = getConfiguration(namespace, workspace.uri);
 
 	let interpreter: string[] = [];
+
 	if (includeInterpreter) {
 		interpreter = getInterpreterFromSetting(namespace, workspace) ?? [];
+
 		if (interpreter.length === 0) {
 			traceLog(
 				`No interpreter found from setting ${namespace}.interpreter`,
@@ -127,6 +141,7 @@ export async function getWorkspaceSettings(
 			);
 			interpreter =
 				(await getInterpreterDetails(workspace.uri)).path ?? [];
+
 			if (interpreter.length > 0) {
 				traceLog(
 					`Interpreter from ms-python.python extension for ${workspace.uri.fsPath}:`,
@@ -147,7 +162,9 @@ export async function getWorkspaceSettings(
 	}
 
 	const args = getArgs(namespace, workspace);
+
 	const path = getPath(namespace, workspace);
+
 	const workspaceSetting = {
 		check: config.get<boolean>("check", false),
 		cwd: workspace.uri.fsPath,
@@ -162,6 +179,7 @@ export async function getWorkspaceSettings(
 		importStrategy: config.get<string>("importStrategy", "useBundled"),
 		showNotifications: config.get<string>("showNotifications", "off"),
 	};
+
 	return workspaceSetting;
 }
 
@@ -171,6 +189,7 @@ function getGlobalValue<T>(
 	defaultValue: T,
 ): T {
 	const inspect = config.inspect<T>(key);
+
 	return inspect?.globalValue ?? inspect?.defaultValue ?? defaultValue;
 }
 
@@ -181,8 +200,10 @@ export async function getGlobalSettings(
 	const config = getConfiguration(namespace);
 
 	let interpreter: string[] = [];
+
 	if (includeInterpreter) {
 		interpreter = getGlobalValue<string[]>(config, "interpreter", []);
+
 		if (interpreter === undefined || interpreter.length === 0) {
 			interpreter = (await getInterpreterDetails()).path ?? [];
 		}
@@ -211,6 +232,7 @@ export async function getGlobalSettings(
 			"off",
 		),
 	};
+
 	return setting;
 }
 
@@ -228,11 +250,14 @@ export function checkIfConfigurationChanged(
 		`${namespace}.showNotifications`,
 		`${namespace}.serverEnabled`,
 	];
+
 	const changed = settings.map((s) => e.affectsConfiguration(s));
+
 	return changed.includes(true);
 }
 
 export function getServerEnabled(namespace: string): boolean {
 	const config = getConfiguration(namespace);
+
 	return config.get<boolean>("serverEnabled", true);
 }

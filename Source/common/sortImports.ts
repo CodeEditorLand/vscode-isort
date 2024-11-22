@@ -58,8 +58,10 @@ class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 		_token: CancellationToken,
 	): Promise<(CodeAction | Command)[]> {
 		const codeActions: (CodeAction | Command)[] = [];
+
 		if (document.uri.fsPath.includes("site-packages")) {
 			traceWarn("Skipping site-packages file: ", document.uri.fsPath);
+
 			return codeActions;
 		}
 		if (isNotebookCell(document.uri)) {
@@ -67,6 +69,7 @@ class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 				"Skipping notebook cell (not supported in server-less mode: ",
 				document.uri.fsPath,
 			);
+
 			return codeActions;
 		}
 
@@ -80,6 +83,7 @@ class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 		const diagnostics = context.diagnostics.filter(
 			(d) => d.source === "isort" && d.code === "E",
 		);
+
 		if (diagnostics.length > 0) {
 			const action2 = new CodeActionWithData(
 				"isort: Fix import sorting and/or formatting",
@@ -99,6 +103,7 @@ class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 		const docs = workspace.textDocuments.filter(
 			(d) => d.uri.fsPath === codeAction.data,
 		);
+
 		if (docs.length === 1) {
 			codeAction.edit = await textEditRunner(this.serverId, docs[0]);
 		}

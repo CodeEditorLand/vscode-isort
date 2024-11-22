@@ -38,6 +38,7 @@ function runScript(
 ): Promise<Result> {
 	traceLog(runner, args.join(" "));
 	traceLog(`CWD: ${options?.cwd}`);
+
 	const promise = new Promise<Result>((resolve, reject) => {
 		const scriptProc = proc.execFile(
 			runner,
@@ -57,6 +58,7 @@ function runScript(
 				}
 			},
 		);
+
 		if (input) {
 			scriptProc.stdin?.end(input, "utf-8");
 		}
@@ -75,17 +77,20 @@ async function getSettings(
 ): Promise<ISettings | undefined> {
 	const workspaceFolder =
 		getWorkspaceFolder(textDocument.uri) || (await getProjectRoot());
+
 	const workspaceSetting = await getWorkspaceSettings(
 		serverId,
 		workspaceFolder,
 		true,
 	);
+
 	if (workspaceSetting.interpreter.length === 0) {
 		traceError(
 			"Python interpreter missing:\r\n" +
 				"[Option 1] Select python interpreter using the ms-python.python.\r\n" +
 				`[Option 2] Set an interpreter using "${serverId}.interpreter" setting.\r\n`,
 		);
+
 		return undefined;
 	}
 
@@ -110,8 +115,11 @@ function getExecutablePathWithArgs(
 
 function getFirstImport(textDocument: TextDocument): number {
 	const content = textDocument.getText();
+
 	const lines = content.split(/\r?\n|\r|\n/g);
+
 	let index = 0;
+
 	for (const line of lines) {
 		if (line.startsWith("import") || line.startsWith("from")) {
 			return index;
@@ -125,10 +133,13 @@ function getSeverity(sev: string): DiagnosticSeverity {
 	switch (sev) {
 		case "Hint":
 			return DiagnosticSeverity.Hint;
+
 		case "Error":
 			return DiagnosticSeverity.Error;
+
 		case "Information":
 			return DiagnosticSeverity.Information;
+
 		case "Warning":
 			return DiagnosticSeverity.Warning;
 	}
@@ -139,6 +150,7 @@ function getUpdatedEnvVariables(settings: ISettings): {
 	[x: string]: string | undefined;
 } {
 	const newEnv = { ...process.env };
+
 	if (settings.path.length === 0) {
 		newEnv.LS_IMPORT_STRATEGY = settings.importStrategy;
 	}
@@ -150,19 +162,25 @@ export async function diagnosticRunner(
 	textDocument: TextDocument,
 ): Promise<Diagnostic[]> {
 	const diagnostics: Diagnostic[] = [];
+
 	const settings = await getSettings(serverId, textDocument);
 
 	if (settings && settings.check) {
 		const parts = getExecutablePathWithArgs(settings);
+
 		const args = parts.slice(1).concat("--check", textDocument.uri.fsPath);
+
 		const newEnv = getUpdatedEnvVariables(settings);
+
 		try {
 			const { stderr } = await runScript(parts[0], args, {
 				ignoreError: true,
 				newEnv,
 				cwd: settings.cwd,
 			});
+
 			const lines = stderr.split(/\r?\n|\r|\n/g);
+
 			for (const line of lines) {
 				if (
 					line.startsWith("ERROR") &&
@@ -193,7 +211,9 @@ export async function diagnosticRunner(
 
 function fixLineEndings(eol: EndOfLine, formatted: string): string {
 	const lines = formatted.replace(/\r\r\n/g, "\r\n").split(/\r?\n/g);
+
 	const result = lines.join(eol === EndOfLine.CRLF ? "\r\n" : "\n");
+
 	return result;
 }
 
@@ -203,10 +223,14 @@ export async function textEditRunner(
 	token?: CancellationToken,
 ): Promise<WorkspaceEdit> {
 	const settings = await getSettings(serverId, textDocument);
+
 	const content = textDocument.getText();
+
 	const lines = content.split(/\r?\n|\r|\n/g);
+
 	if (settings) {
 		let parts: string[] = [];
+
 		let args: string[] = [];
 
 		if (textDocument.isDirty || textDocument.isUntitled) {
@@ -225,16 +249,19 @@ export async function textEditRunner(
 				{ ignoreError: true, newEnv, cwd: settings.cwd },
 				content,
 			);
+
 			const newContent =
 				stdout.length === 0
 					? content
 					: fixLineEndings(textDocument.eol, stdout);
+
 			const edits = new WorkspaceEdit();
 			edits.replace(
 				textDocument.uri,
 				new Range(new Position(0, 0), new Position(lines.length, 0)),
 				newContent,
 			);
+
 			return edits;
 		} catch (err) {
 			traceError(err);
@@ -247,5 +274,6 @@ export async function textEditRunner(
 			content,
 		),
 	]);
+
 	return edits;
 }
