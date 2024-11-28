@@ -24,7 +24,9 @@ import { diagnosticRunner, textEditRunner } from "./runner";
 import { getDocumentSelector } from "./utilities";
 
 export const notebookCellScheme = "vscode-notebook-cell";
+
 export const interactiveInputScheme = "vscode-interactive-input";
+
 export const interactiveScheme = "vscode-interactive";
 
 function isNotebookCell(uri: Uri): boolean {
@@ -36,6 +38,7 @@ function isNotebookCell(uri: Uri): boolean {
 }
 
 let disposables: Disposable[] = [];
+
 export function unRegisterSortImportFeatures(): void {
 	disposables.forEach((d) => {
 		try {
