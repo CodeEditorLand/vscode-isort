@@ -22,6 +22,7 @@ import { getWorkspaceFolder } from "./vscodeapi";
 
 interface Result {
 	stdout: string;
+
 	stderr: string;
 }
 
@@ -30,13 +31,16 @@ function runScript(
 	args: string[],
 	options?: {
 		ignoreError?: boolean;
+
 		cwd?: string;
+
 		newEnv?: { [x: string]: string | undefined };
 	},
 	input?: string,
 	token?: CancellationToken,
 ): Promise<Result> {
 	traceLog(runner, args.join(" "));
+
 	traceLog(`CWD: ${options?.cwd}`);
 
 	const promise = new Promise<Result>((resolve, reject) => {
@@ -62,6 +66,7 @@ function runScript(
 		if (input) {
 			scriptProc.stdin?.end(input, "utf-8");
 		}
+
 		token?.onCancellationRequested(() => {
 			//resolve({ stdout: '', stderr: '' });
 			//scriptProc.kill();
@@ -124,8 +129,10 @@ function getFirstImport(textDocument: TextDocument): number {
 		if (line.startsWith("import") || line.startsWith("from")) {
 			return index;
 		}
+
 		index += 1;
 	}
+
 	return 0;
 }
 
@@ -143,6 +150,7 @@ function getSeverity(sev: string): DiagnosticSeverity {
 		case "Warning":
 			return DiagnosticSeverity.Warning;
 	}
+
 	return DiagnosticSeverity.Error;
 }
 
@@ -154,6 +162,7 @@ function getUpdatedEnvVariables(settings: ISettings): {
 	if (settings.path.length === 0) {
 		newEnv.LS_IMPORT_STRATEGY = settings.importStrategy;
 	}
+
 	return newEnv;
 }
 
@@ -189,6 +198,7 @@ export async function diagnosticRunner(
 						.includes("imports are incorrectly sorted")
 				) {
 					const lineNo = getFirstImport(textDocument);
+
 					diagnostics.push({
 						range: new Range(
 							new Position(lineNo, 0),
@@ -206,6 +216,7 @@ export async function diagnosticRunner(
 			traceError(err);
 		}
 	}
+
 	return diagnostics;
 }
 
@@ -235,11 +246,14 @@ export async function textEditRunner(
 
 		if (textDocument.isDirty || textDocument.isUntitled) {
 			parts = getExecutablePathWithArgs(settings, ["-"]);
+
 			args = parts.slice(1).concat("--filename", textDocument.uri.fsPath);
 		} else {
 			parts = getExecutablePathWithArgs(settings);
+
 			args = parts.slice(1).concat("--stdout", textDocument.uri.fsPath);
 		}
+
 		const newEnv = getUpdatedEnvVariables(settings);
 
 		try {
@@ -256,6 +270,7 @@ export async function textEditRunner(
 					: fixLineEndings(textDocument.eol, stdout);
 
 			const edits = new WorkspaceEdit();
+
 			edits.replace(
 				textDocument.uri,
 				new Range(new Position(0, 0), new Position(lines.length, 0)),
@@ -267,7 +282,9 @@ export async function textEditRunner(
 			traceError(err);
 		}
 	}
+
 	const edits = new WorkspaceEdit();
+
 	edits.set(textDocument.uri, [
 		TextEdit.replace(
 			new Range(new Position(0, 0), new Position(lines.length, 0)),

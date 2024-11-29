@@ -14,14 +14,21 @@ import { getConfiguration, getWorkspaceFolders } from "./vscodeapi";
 
 export interface ISettings {
 	check: boolean;
+
 	cwd: string;
+
 	workspace: string;
+
 	args: string[];
+
 	severity: Record<string, string>;
+
 	path: string[];
+
 	interpreter: string[];
 
 	importStrategy: string;
+
 	showNotifications: string;
 }
 
@@ -50,9 +57,11 @@ function resolveVariables(
 	if (home) {
 		substitutions.set("${userHome}", home);
 	}
+
 	if (workspace) {
 		substitutions.set("${workspaceFolder}", workspace.uri.fsPath);
 	}
+
 	substitutions.set("${cwd}", process.cwd());
 
 	getWorkspaceFolders().forEach((w) => {
@@ -63,6 +72,7 @@ function resolveVariables(
 		for (const [key, value] of substitutions) {
 			s = s.replace(key, value);
 		}
+
 		return s;
 	});
 }
@@ -85,6 +95,7 @@ function getArgs(namespace: string, workspace: WorkspaceFolder): string[] {
 			`Using legacy configuration form 'python.sortImports.args': ${legacyArgs.join(" ")}.`,
 		);
 	}
+
 	return legacyArgs;
 }
 
@@ -108,6 +119,7 @@ function getPath(namespace: string, workspace: WorkspaceFolder): string[] {
 
 		return [legacyPath];
 	}
+
 	return [];
 }
 
@@ -136,9 +148,11 @@ export async function getWorkspaceSettings(
 			traceLog(
 				`No interpreter found from setting ${namespace}.interpreter`,
 			);
+
 			traceLog(
 				`Getting interpreter from ms-python.python extension for workspace ${workspace.uri.fsPath}`,
 			);
+
 			interpreter =
 				(await getInterpreterDetails(workspace.uri)).path ?? [];
 

@@ -45,6 +45,7 @@ export function unRegisterSortImportFeatures(): void {
 			d.dispose();
 		} catch {}
 	});
+
 	disposables = [];
 }
 
@@ -54,6 +55,7 @@ class CodeActionWithData extends CodeAction {
 
 class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 	constructor(private readonly serverId: string) {}
+
 	async provideCodeActions(
 		document: TextDocument,
 		_range: Range | Selection,
@@ -67,6 +69,7 @@ class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 
 			return codeActions;
 		}
+
 		if (isNotebookCell(document.uri)) {
 			traceWarn(
 				"Skipping notebook cell (not supported in server-less mode: ",
@@ -80,7 +83,9 @@ class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 			"isort: Organize Imports",
 			CodeActionKind.SourceOrganizeImports,
 		);
+
 		action1.data = document.uri.fsPath;
+
 		codeActions.push(action1);
 
 		const diagnostics = context.diagnostics.filter(
@@ -92,7 +97,9 @@ class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 				"isort: Fix import sorting and/or formatting",
 				CodeActionKind.QuickFix,
 			);
+
 			action2.data = document.uri.fsPath;
+
 			codeActions.push(action2);
 		}
 
@@ -110,6 +117,7 @@ class SortImportsCodeActionProvider implements CodeActionProvider<CodeAction> {
 		if (docs.length === 1) {
 			codeAction.edit = await textEditRunner(this.serverId, docs[0]);
 		}
+
 		return codeAction;
 	}
 }
@@ -160,6 +168,7 @@ export function registerSortImportFeatures(
 	unRegisterSortImportFeatures();
 
 	const diagnosticsProvider = new SortImportsDiagnosticProvider();
+
 	disposables.push(
 		languages.registerCodeActionsProvider(
 			getDocumentSelector(),
@@ -177,12 +186,14 @@ export function registerSortImportFeatures(
 		workspace.onDidOpenTextDocument(async (td: TextDocument) => {
 			if (td.languageId === "python") {
 				const diagnostics = await diagnosticRunner(serverId, td);
+
 				diagnosticsProvider.publishDiagnostics(td.uri, diagnostics);
 			}
 		}),
 		workspace.onDidSaveTextDocument(async (td: TextDocument) => {
 			if (td.languageId === "python") {
 				const diagnostics = await diagnosticRunner(serverId, td);
+
 				diagnosticsProvider.publishDiagnostics(td.uri, diagnostics);
 			}
 		}),

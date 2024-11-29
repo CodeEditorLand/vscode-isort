@@ -188,25 +188,33 @@ type PythonReleaseLevel = "alpha" | "beta" | "candidate" | "final";
  */
 type PythonVersionRelease = {
 	readonly level: PythonReleaseLevel;
+
 	readonly serial: number;
 };
 
 type VersionInfo = {
 	readonly major: number | undefined;
+
 	readonly minor: number | undefined;
+
 	readonly micro: number | undefined;
+
 	readonly release: PythonVersionRelease | undefined;
 };
 
 type ResolvedVersionInfo = {
 	readonly major: number;
+
 	readonly minor: number;
+
 	readonly micro: number;
+
 	readonly release: PythonVersionRelease;
 };
 
 interface IExtensionApi {
 	ready: Promise<void>;
+
 	debug: {
 		getRemoteLauncherCommand(
 			host: string,
@@ -216,17 +224,21 @@ interface IExtensionApi {
 
 		getDebuggerPackagePath(): Promise<string | undefined>;
 	};
+
 	environments: {
 		getActiveEnvironmentPath(resource?: Resource): EnvironmentPath;
+
 		resolveEnvironment(
 			environment: Environment | EnvironmentPath | string,
 		): Promise<ResolvedEnvironment | undefined>;
+
 		readonly onDidChangeActiveEnvironmentPath: Event<ActiveEnvironmentPathChangeEvent>;
 	};
 }
 
 export interface IInterpreterDetails {
 	path?: string[];
+
 	resource?: Uri;
 }
 
@@ -244,6 +256,7 @@ async function activateExtension() {
 			await extension.activate();
 		}
 	}
+
 	return extension;
 }
 
@@ -270,6 +283,7 @@ export async function initializePython(
 			);
 
 			traceLog("Waiting for interpreter from python extension.");
+
 			onDidChangePythonInterpreterEvent.fire(
 				await getInterpreterDetails(),
 			);
@@ -299,6 +313,7 @@ export async function getInterpreterDetails(
 	if (environment?.executable.uri && checkVersion(environment)) {
 		return { path: [environment?.executable.uri.fsPath], resource };
 	}
+
 	return { path: undefined, resource };
 }
 
@@ -325,10 +340,13 @@ export function checkVersion(
 	if (version?.major === 3 && version?.minor >= 8) {
 		return true;
 	}
+
 	traceError(
 		`Python version ${version?.major}.${version?.minor} is not supported.`,
 	);
+
 	traceError(`Selected python path: ${resolved?.executable.uri?.fsPath}`);
+
 	traceError("Supported versions are 3.8 and above.");
 
 	return false;
